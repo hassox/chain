@@ -41,7 +41,6 @@ var Responder = new Link.App("Responder", {
     res.sendHeader(env.status, env.headers);
     res.sendBody(env.body);
     res.finish();
-    env.complete();
   }
 });
 
@@ -62,6 +61,6 @@ var EndPoint = new Link.App("EndPoint", {
 });
 
 
-Link.Builder.chain(Responder, [EndPoint]);
+Link.Builder.chain([Responder, EndPoint]);
 
 Link.run(Responder);
