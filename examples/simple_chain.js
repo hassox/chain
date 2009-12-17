@@ -4,9 +4,9 @@ process.mixin(require('./../lib/link'));
 var Responder = new Link.App.Standard("Responder", {
   on : {
     request  : function(env){
-      puts("Recieved Request in the responder");
       this.pass(env);
     },
+
     response : function(env){
       env.body = "Hi There";
       var res = env.response;
