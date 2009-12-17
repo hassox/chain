@@ -18,9 +18,9 @@ The Link.Environment instance is the common thread throughout the request.  The 
 
 * env.request           - The raw server request object from node.js
 * env.response          - The raw server response object fromnode.js
-* env.callBack          - Add a callback to run after the request is considered "done" by an application.
+* env.callback          - Add a callback to run after the request is considered "done" by an application.
 * env.ensuredCallback   - Add a callback that MUST be run at the end of every request (after the response.finish() call)
-* env.done      - The trigger to fire the callBack collection.  Also use inside the callback to trigger the next callback.
+* env.done      - The trigger to fire the callback collection.  Also use inside the callback to trigger the next callback.
 * env.complete  - MUST be called at the end of every request.  This fires the env.ensuredCallbacks collection.
 * env.params - A method that provides access to an object consiting of the URI parameters + the POST body parameters
 * env.headers
