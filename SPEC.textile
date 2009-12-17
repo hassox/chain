@@ -10,7 +10,7 @@ A Link compatible appliction has the following characteristics
 
 * Each application piece MUST listen to itself for a "request" event, the first argument of which must be THE Link.Environment instance for the request.
 * The Link.Environment instance MUST be passed on.  An applicaiton may not recieve an instance of the Link.Environment and pass a different instance to the next applciation
-* If an application component repsonds to the client, they MUST call the _compolete_ method on the Link.Environment instance before ending the method.
+* If an application component repsonds to the client, they MUST call the _complete_ method on the Link.Environment instance before ending the method.
 
 .h2 Link.Environment
 
@@ -23,6 +23,9 @@ The Link.Environment instance is the common thread throughout the request.  The 
 * env.done      - The trigger to fire the callBack collection.  Also use inside the callback to trigger the next callback.
 * env.complete  - MUST be called at the end of every request.  This fires the env.ensuredCallbacks collection.
 * env.params - A method that provides access to an object consiting of the URI parameters + the POST body parameters
+* env.headers
+* env.status
+* env.body
 
 .h2 Global Components
 
@@ -45,5 +48,4 @@ Link.broadcast("major_event_type", "specific_event"[, any, other, args])
 Link emits the following Events.
 
 * "start", "http" - emitted when the http server starts.
-* IS THERE ANY OTHER EVENTS WE WANT TO EMIT?
 
