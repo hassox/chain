@@ -1,20 +1,15 @@
 process.mixin(require("sys"));
 process.mixin(require('./../lib/link'));
 
-app = Link.Builder.chain([
-  Link.Links.Responder,
-  function(env) {
-    
-    env.finish(function() {
-      puts('all done!')
-    })
-    
-    env.call(function() {
-      env.body += 'hey guys'
-      env.done()
-    })
-  }
-])
+
+app = Link.Builder.chain([function(env) {
+  env.onFinish(function() {
+    puts('all done!')
+  })
+
+  env.body += "Hey Guys"
+  env.done()
+}])
 
 Link.run(app);
 
