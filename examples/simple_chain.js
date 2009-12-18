@@ -22,17 +22,15 @@ Link.addListener("Auditor", function(message_type, messages){
 var SomeMiddleware = new Link.App("SomeMiddleware", {
   onRequest : function(env){
     var self = this
-    this.audit("A Message from the SomeMiddleware")
-
     env.onDone(function(){
       env.done();
     })
-
     if (env.request.uri.path == "/test"){
       env.send(this.nextApp)
     } else {
       env.send(SomeEndPoint)
     }
+    this.audit("A Message from the SomeMiddleware")
   }
 })
 
