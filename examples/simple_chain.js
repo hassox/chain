@@ -3,33 +3,28 @@ process.mixin(require('./../lib/link'));
 
 /* A global auditor */
 var Auditor = {
-  handle : function(messages){
+  handle : function(message_type, messages){
     puts(new Date().toString() + " Auditing the environment with uri " + env.request.uri.path);
-    args = Array.prototype.slice.call(messages)
-    while(message = args.shift()){
-      puts("   " + message);
-    }
+    while(message = messages.shift()) puts("   " + message);
   }
 }
 
 Link.App.prototype.audit = function(){
-  this.emit("audit", arguments)
+  Link.broadcast("Auditor", "audit", Array.prototype.slice.call(arguments))
 }
 
-Link.addGlobalCallback(function(app){
-  app.addListener("audit",function(env){
-    Auditor.handle(env);
-  });
-});
+Link.addListener("Auditor", function(message_type, messages){
+  Auditor.handle(message_type, messages)
+})
+
 /* End the global auditor */
 
 var SomeMiddleware = new Link.App("SomeMiddleware", {
   onRequest : function(env){
     var self = this
-    this.audit("A Message from the middleware")
+    this.audit("A Message from the SomeMiddleware")
 
     env.onDone(function(){
-      puts("On the way out.  I went through Some Middleware")
       env.done();
     })
 
@@ -45,7 +40,7 @@ var SomeEndPoint = new Link.App("SomeEndPoint", {
   onRequest : function(env){
     env.body += "I'm In " + this.name;
     env.done();
-    this.audit("Hi, I'm in Some Endpoint and I've got something to say");
+    this.audit("Hi, I'm in Some Endpoint and I've got something to say", "And I've got somethign else to say too");
   }
 })
 
@@ -57,7 +52,6 @@ var EndPoint = new Link.App("EndPoint", {
     this.audit("I'm in the Endpoint.  I'm done " )
   }
 });
-
 
 app = Link.Builder.chain([SomeMiddleware, EndPoint]);
 
