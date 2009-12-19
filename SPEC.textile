@@ -1,49 +1,48 @@
-.h1 Link Spec
+h1. Chain Spec
 
-Link is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Link links multiple application components, hereafter refered to as just "components" together by giving a standard way to pass requests.
+Chain is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Chain links multiple application components, hereafter refered to as "links" together by giving a standard way to pass requests.
 
-Link specifies a chain like structure for components, based purley on events to move from one component to another.  This has the benefit of minimising call-stack dependent applicaitons, and allowing a consitent way to call components from other application components, thereby maximising re-usability.
+Chain specifies a default chain structure for links, based purley on events to move from one link to another.  This has the benefit of minimising call-stack dependent applicaitons, and allowing a consitent way to call links from other applications and links, thereby maximising re-usability.
 
-.h2 Applications
+h2. Applications
 
-A Link compatible appliction has the following characteristics
+A Chain compatible appliction has the following characteristics
 
-* Each component MUST listen to itself for a "request" event.  The first, and only argument of which must be THE Link.Environment instance for the request.
-* The Link.Environment instance MUST be passed on.  An applicaiton may not recieve one instance of the Link.Environment and pass a different instance to the next applciation
+* Each link MUST listen to itself for a "request" event.  The first, and only argument of which must be THE Chain.Environment instance for the request.
+* The Chain.Environment instance MUST be passed on.  An applicaiton may not recieve one instance of the Chain.Environment and pass a different instance to the next applciation
 * If an application is finished but does not respond to the client directly, it should call the _done_ method on the environment instance before finshing the method.
 
-.h2 Link.Environment
+h2. Chain.Environment
 
-The Link.Environment instance is the common thread throughout the request.  The Link.Environment MUST include the following with the following meanings. (Link.Environment instance is called _env_ in the following list)
+The Chain.Environment instance is the common thread throughout the request.  The Chain.Environment MUST include the following with the following meanings. (Chain.Environment instance is called _env_ in the following list)
 
 * env.request           - The raw server request object from node.js
 * env.response          - The raw server response object fromnode.js
 * env.onDone            - Add a callback to run after the request is considered "done" by an application.  These callbacks _may_ run.  See further for more information
 * env.onFinish          - Queues a callback will run after the response.finish() method is called.  This callback will run once that method is called.
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
-* env.params - A method that provides access to an object consiting of the URI parameters + the POST body parameters
 * env.headers
 * env.status
 * env.body
 
-.h2 Global Components
+h2. Global Links
 
-Link may store global level components.  These are made available so that all applications may access them.  You may add an appliation to the collection if it is to act in a global capacity.  These are available at
+Chain may store global level links.  These are made available so that all applications may access them.  You may add an appliation to the collection if it is to act in a global capacity.  These are available at
 
-Link.Links
+Chain.Links
 
 Examples may be (these may not be implemented)
-Link.Links.Errors
-Link.Links.Layouts
-Link.Links.Auditing
-Link.Links.Logging
+Chain.Links.Errors
+Chain.Links.Layouts
+Chain.Links.Auditing
+Chain.Links.Logging
 
-.h2 Link Events
+h2. Chain Events
 
-Link is an event emitter and will emit events as a central message dispatch.  Link will emit events on various stages of the build.  The event should be a generic event type followed by a specified type.  Any component can also have Link broadcast events
+Chain is an event emitter and will emit events as a central message dispatch.  Chain will emit events on various stages of the build.  The event should be a generic event type followed by a specified type.  Any link can also have Chain broadcast events
 
-Link.broadcast("major_event_type", "specific_event"[, any, other, args])
+Chain.broadcast("major_event_type", "specific_event"[, any, other, args])
 
-Link emits the following Events.
+Chain emits the following Events.
 
 * "start", "http" - emitted when the http server starts.

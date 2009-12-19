@@ -1,5 +1,5 @@
 process.mixin(require("sys"));
-process.mixin(require('./../lib/link'));
+process.mixin(require('./../lib/chain'));
 
 /* A global auditor */
 var Auditor = {
@@ -9,17 +9,17 @@ var Auditor = {
   }
 }
 
-Link.App.prototype.audit = function(){
-  Link.broadcast("Auditor", "audit", Array.prototype.slice.call(arguments))
+Chain.Link.prototype.audit = function(){
+  Chain.broadcast("Auditor", "audit", Array.prototype.slice.call(arguments))
 }
 
-Link.addListener("Auditor", function(message_type, messages){
+Chain.addListener("Auditor", function(message_type, messages){
   Auditor.handle(message_type, messages)
 })
 
 /* End the global auditor */
 
-var SimpleRouter = new Link.App("SimpleRouter", {
+var SimpleRouter = new Chain.Link("SimpleRouter", {
   onRequest : function(env){
     var self = this
 
@@ -32,7 +32,7 @@ var SimpleRouter = new Link.App("SimpleRouter", {
   }
 })
 
-var SomeEndPoint = new Link.App("SomeEndPoint", {
+var SomeEndPoint = new Chain.Link("SomeEndPoint", {
   onRequest : function(env){
     env.body += "I'm In " + this.name;
     env.done();
@@ -40,7 +40,7 @@ var SomeEndPoint = new Link.App("SomeEndPoint", {
   }
 })
 
-var EndPoint = new Link.App("EndPoint", {
+var EndPoint = new Chain.Link("EndPoint", {
   onRequest : function(env){
     env.body += "<br/>I'm in the endpoint now!";
     env.headers["Content-Type"] = "text/plain";
@@ -49,6 +49,6 @@ var EndPoint = new Link.App("EndPoint", {
   }
 });
 
-app = Link.Builder.chain([SimpleRouter, EndPoint]);
+app = Chain.Builder.make([SimpleRouter, EndPoint]);
 
-Link.run(app);
+Chain.run(app);
