@@ -19,20 +19,16 @@ Link.addListener("Auditor", function(message_type, messages){
 
 /* End the global auditor */
 
-var SomeMiddleware = new Link.App("SomeMiddleware", {
+var SimpleRouter = new Link.App("SimpleRouter", {
   onRequest : function(env){
     var self = this
-
-    env.onDone(function(){
-      env.done();
-    })
 
     if (env.request.uri.path == "/test"){
       env.send(this.nextApp)
     } else {
       env.send(SomeEndPoint)
     }
-    this.audit("A Message from the SomeMiddleware")
+    this.audit("A Message from the SimpleRouter")
   }
 })
 
@@ -53,6 +49,6 @@ var EndPoint = new Link.App("EndPoint", {
   }
 });
 
-app = Link.Builder.chain([SomeMiddleware, EndPoint]);
+app = Link.Builder.chain([SimpleRouter, EndPoint]);
 
 Link.run(app);
