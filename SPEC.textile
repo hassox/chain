@@ -1,23 +1,23 @@
 h1. Chain Spec
 
-Chain is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Chain links multiple application components, hereafter refered to as "links" together by giving a standard way to pass requests.
+Chain is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Chain links multiple application components, hereafter referred to as "links" together by giving a standard way to pass requests.
 
-Chain specifies a default chain structure for links, based purley on events to move from one link to another.  This has the benefit of minimising call-stack dependent applicaitons, and allowing a consitent way to call links from other applications and links, thereby maximising re-usability.
+Chain specifies a default chain structure for links, based purely on events to move from one link to another.  This has the benefit of minimising call-stack dependent applications, and allowing a consistent way to call links from other applications and links, thereby maximising re-usability.
 
 h2. Applications
 
-A Chain compatible appliction has the following characteristics
+A Chain compatible application has the following characteristics
 
-* Each link MUST listen to itself for a "request" event.  The first, and only argument of which must be THE Chain.Environment instance for the request.
-* The Chain.Environment instance MUST be passed on.  An applicaiton may not recieve one instance of the Chain.Environment and pass a different instance to the next applciation
-* If an application is finished but does not respond to the client directly, it should call the _done_ method on the environment instance before finshing the method.
+* Each link MUST listen to itself for a "request" event.  The first, and only, argument of which must be THE Chain.Environment instance for the request.
+* The Chain.Environment instance MUST be passed on.  An application may not receive one instance of the Chain.Environment and pass a different instance to the next application
+* If an application is finished but does not respond to the client directly, it should call the _done_ method on the environment instance before finsihing the method.
 
 h2. Chain.Environment
 
 The Chain.Environment instance is the common thread throughout the request.  The Chain.Environment MUST include the following with the following meanings. (Chain.Environment instance is called _env_ in the following list)
 
 * env.request           - The raw server request object from node.js
-* env.response          - The raw server response object fromnode.js
+* env.response          - The raw server response object from node.js
 * env.onDone            - Add a callback to run after the request is considered "done" by an application.  These callbacks _may_ run.  See further for more information
 * env.onFinish          - Queues a callback will run after the response.finish() method is called.  This callback will run once that method is called.
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
@@ -27,7 +27,7 @@ The Chain.Environment instance is the common thread throughout the request.  The
 
 h2. Global Links
 
-Chain may store global level links.  These are made available so that all applications may access them.  You may add an appliation to the collection if it is to act in a global capacity.  These are available at
+Chain may store global level links.  These are made available so that all applications may access them.  You may add an application to the collection if it is to act in a global capacity.  These are available at
 
 Chain.Links
 
@@ -41,7 +41,7 @@ h2. Chain Events
 
 Chain is an event emitter and will emit events as a central message dispatch.  Chain will emit events on various stages of the build.  The event should be a generic event type followed by a specified type.  Any link can also have Chain broadcast events
 
-Chain.broadcast("major_event_type", "specific_event"[, any, other, args])
+Chain.broadcast("major_event_type", "specific_event", [any, other, args])
 
 Chain emits the following Events.
 
