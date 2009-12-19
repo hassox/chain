@@ -4,6 +4,7 @@ Chain is a convention for building web applications.  Why Another One?  Events.
 
 The conventions to date for making web applications are callstack based.
 
+<pre>
 function
   -> function
     -> function
@@ -12,6 +13,7 @@ function
       <- return
     <- return
   <- return
+</pre>
 
 For any rubyists this is great, it's how rack works.  Call a method and return a value.  Easy.  This is a callstack structure.  Any exception raised or thrown in downstream methods can be caught and delt with.  You know what you're getting, and the request is assured to pass through so you can modify it when it comes back up the stack.  I've written a lot of Rack middleware and think it's great in Ruby.
 
