@@ -10,25 +10,25 @@ var Auditor = {
 }
 
 Chain.Link.prototype.audit = function(){
-  Chain.broadcast("Auditor", "audit", Array.prototype.slice.call(arguments))
+  Chain.broadcast("Auditor", "audit", Array.prototype.slice.call(arguments));
 }
 
 Chain.addListener("Auditor", function(message_type, messages){
-  Auditor.handle(message_type, messages)
+  Auditor.handle(message_type, messages);
 })
 
 /* End the global auditor */
 
 var SimpleRouter = new Chain.Link("SimpleRouter", {
   onRequest : function(env){
-    var self = this
+    var self = this;
 
     if (env.request.uri.path == "/test"){
-      env.send(this.nextApp)
+      env.send(this.nextApp);
     } else {
-      env.send(SomeEndPoint)
+      env.send(SomeEndPoint);
     }
-    this.audit("A Message from the SimpleRouter")
+    this.audit("A Message from the SimpleRouter");
   }
 })
 

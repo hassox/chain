@@ -10,11 +10,11 @@ will return
 
 app = Chain.Builder.make(
   function(env) {
-    env.headers['content-type'] = 'text/html'
-    env.body = "<h1>Hello jello world</h1>"
-    env.done()
+    env.headers['content-type'] = 'text/html';
+    env.body = "<h1>Hello jello world</h1>";
+    env.done();
   }
-)
+);
 
 Chain.run(app);
 

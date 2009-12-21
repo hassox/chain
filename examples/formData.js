@@ -10,8 +10,8 @@ app = Chain.Builder.make(function(env) {
       "test": "test"
     }
     */
-    env.body = inspect(env.parts)
-    env.done()
+    env.body = inspect(env.parts);
+    env.done();
   })
 
 
