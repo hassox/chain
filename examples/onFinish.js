@@ -1,7 +1,7 @@
 // curl http://127.0.0.1:8000
 
 process.mixin(require("sys"));
-process.mixin(require('./../lib/chain'));
+var Chain = require('../lib/chain');
 
 /*
 will return

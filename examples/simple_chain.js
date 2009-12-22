@@ -1,5 +1,5 @@
 process.mixin(require("sys"));
-process.mixin(require('./../lib/chain'));
+var Chain = require('../lib/chain');
 
 /* A global auditor */
 var Auditor = {
