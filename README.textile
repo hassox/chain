@@ -36,3 +36,6 @@ To start your application use
 Chain.run(app)
 
 See the examples for more information.
+
+This project is brought to you as a joint work by Joshua Hull & Daniel Neighman
+
