@@ -16,7 +16,6 @@ var count = 0;
 try{
   app = Chain.Builder.make(
     function(env) {
-      sys.puts(sys.inspect(env.request.connection))
       env.headers['content-type'] = 'text/html';
       env.body = "<h1>Hello jello world</h1>";
       env.done();
