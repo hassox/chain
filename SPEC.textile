@@ -20,7 +20,8 @@ The Chain.Environment instance is the common thread throughout the request.  The
 * env.response          - The raw server response object from node.js
 * env.onDone            - Add a callback to run after the request is considered "done" by an application.  These callbacks _may_ run.  See further for more information
 * env.onFinish          - Queues a callback will run after the response.finish() method is called.  This callback will run once that method is called.
-* env.beforeHeaders     - Add a callback to run just before the headers are sent to the client.  This can be used to encode the session into the cookie and other such functionality.  Optionally return an integer to change the status code.
+* env.beforeHeaders     - Add a callback to run just before the headers are sent to the client.  This can be used to encode the session into the cookie and other such functionality.  Optionally return an array with the arguments for response.sendHeader
+* env.beforeSendBody    - Add a filter the the send body method.  By supplying a function that accepts the same arguments as response.sendBody you can modify the chunck prior to it being sent to the client.  These can be queued for multi stage filtering.  To change the arguments, return an array of the arguments to pass to sendBody
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
 * env.headers
 * env.status

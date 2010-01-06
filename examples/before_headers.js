@@ -8,7 +8,7 @@ var app = chain.Builder.make([
       sys.puts("STATUS:   " + status);
       sys.puts("HEADERS:  " + sys.inspect(headers));
       headers["X-MyHeader"] = "Some Header"
-      return 500; // change the status code
+      return [500, headers]; // change the status code
     })
 
     env.send(this.nextApp);
