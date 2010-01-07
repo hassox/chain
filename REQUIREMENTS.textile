@@ -1,0 +1,35 @@
+h1. Reuquirements
+
+This is a scratch pad for the requirements (bahaviors) of Chain.  What it should do and why.  Some API examples are also provided to show how.
+
+A "Link" is a piece of the application that can be developed in a focused, reasonably isolated way.
+
+
+h2. Moving Around the Chain
+
+Moving around the chain of links is
+
+* Provide a default path through the chain
+* Pass a request forward to the next link in the default chain
+* Pass a request forward to an arbitrary link
+* Pass a request back one step (Note, it should only ever go one step back)
+* Stop a request without passing it back (complete / websocket / long connection etc)
+
+h2. Callbacks
+
+In callstack based setups, each component sees the request on the way in, and on the way out.  Callbacks are a way to see the request "on the way out".  There are a number of different callbacks required to ensure that long open connections can function correctly.
+
+* Add callbacks so this link sees the env on the backwards traversal.
+** Can either act to send it to the client, or modify the response.
+** These callbacks may not actually run if something downstream finishes the response.
+* Add callbacks to modify the headers prior to them being sent
+** Need to be able to modify the headers hash.  Links may want to set content-length content-type or other header values
+* Add callbacks to modify body chunks prior to them being sent
+** Individual chunks should be accessible.  eg. gzipping each chunk
+* Add callbacks to perform actions after a response is finished
+** Need to run after the response is finished.  This way the client gets the response asap, and anything later can be run after the response is finished.
+** Mail, Logging, Auditing, DB Connection Cleanup etc.
+
+h2. Building A Chain
+
+* Join links together to provide a default path
