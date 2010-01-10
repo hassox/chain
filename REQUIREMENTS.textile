@@ -1,4 +1,4 @@
-h1. Reuquirements
+h1. Requirements
 
 This is a scratch pad for the requirements (bahaviors) of Chain.  What it should do and why.  Some API examples are also provided to show how.
 
@@ -8,6 +8,9 @@ Chaining has proven it's worth in many systems and allows decoupled components t
 
 By using an event to push the request forward through the chain, callstacks are minimised, and are eliminated between components.  This is important to allow many requests to get a slice of the processor.  Considering that the event loop has no threads, any one request that holds the attention of the event loop for it's entire request means that no other request, or out of request process can use the processor till it's finished.  By forcing components to use events to pass the reqest around it gives up control of the event loop so that many things may be processed in a much more timely manner.  Imagine iterating through a huge array inside a browser.  Although there's no IO wait occuring and CPU utilisation is maximised.  The event loop is also stalled waiting for the calcs to finish.  By spliting things into smaller chunks, we can be more responsive on the server.
 
+Although chain uses an event to push the request forward, it does so by having each link setup a "request" event listener on itself.  Setting up static listeners on objects to "listen" for a request object on something upstream means that the path through the application becomes static.  A router, or other piece of kit cannt determine where to send the request next.  It also becomes possible that there will be multiple listeners on a link meaning that there is potential for conflict.  By having a link listen to itself for the request object, there is no potential for conflict, and each link may contain the logic required to pass the request onto the next stage.
+
+Likewise there are no event listeners setup for the request coming back through the chain.  This is for similar reasons, but also, so that each link can register it's interest only if required.
 
 Ryah: "With no concurrency, comes great concurrency"
 
