@@ -79,6 +79,11 @@ builder
 chain.run(builder.build());
 </code></pre>
 
+h1. Streaming
+
+It's easy to stream in Chain.  Then environment gives you access to the raw response object.  You can stream by using the raw response object, and if you finsih the response with response.finish(), you can.
+
+By doing so you're finishing the response and you shouldn't invoke the callback functions.
 
 h1. Some examples of chain applications:
 

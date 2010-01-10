@@ -1,0 +1,168 @@
+h1. Demonstrates the API for Chain
+
+For the purposes of this document, the "chain" variable is the imported Chain object.  The "env" object is the chain request environment object
+
+h1. Moving around the Chain
+
+h2. Sending the request forward
+
+To send the request from one link to another:
+
+<pre><code>// Simple pass it forward:
+env.send(nextApp);
+
+// Pass it forward with a callback:
+env.send(nextApp, function(){
+  /* do stuff here */
+})
+
+// Manually pass it forward to another Link:
+otherLink.emit("request", env);
+</code></pre>
+
+h2. Sending the request back through the chain
+
+When you recieve a request you can add a function to be called "on the way out" so that you can modify / affect the response after the endpoint has done it's thing.
+
+<pre><code>//First register a callback
+env.send(nextApp, function(){
+  // do stuff
+  env.done();
+});
+
+// Send the request back one link:
+env.done();
+</code></pre>
+
+Any link that does not finish the request should call env.done().  All such callbacks should similarly call env.done()
+
+h1. Callbacks
+
+Callbacks are run as a stack.  That is, reverse declared order (last is run first)
+These callbacks are available.  They do not _have_ to be used, and should only be used if you have reason.
+
+h2. beforeHeaders
+
+These callbacks run prior to response.sendHeader.  By returning an array with the arguments for response.sendHeader you can intercept and modify the headers before they're sent to the client.
+
+<pre><code>// A callback that modifies the headers
+env.beforeHeaders(function(status, headers){
+  // do stuff to the headers and or status
+  return [status, headers];
+});
+
+// A callback that does not modify the headers
+env.beforeHeaders(function(status, headers){
+  // do stuff
+  // no return
+});
+</code></pre>
+
+h2. beforeSendBody
+
+Run before each chunk is sent for response.sendBody.  To alter the response chunk, return an array with new arguments for the response.sendBody function.
+
+The initial reason for this is to enable per-chunk gzipping enabled by an upstream link.
+
+<pre><code>// A simple gzipper
+env.beforeSendBody(function(chunk, encoding){
+  // do stuff to the chunk
+  // maybe audit / log stuff
+  return [modifiedChunk, encoding]
+})
+</code></pre>
+
+h2. onDone
+
+The callbacks to execute "on the way out" of the chain.  These are executed in reverse declared order with env.done()
+
+<pre><code>// Added explicilty
+env.onDone(function(){
+  // Do stuff if the request comes by here again
+  env.done() // be sure to call this to call the next callback unless you've called env.response.finsih()
+})
+
+// Implicitly adding to the onDone stack when sending the request forward
+env.send(nextApp, function(){
+  // an onDone callback.  Will be called if the request makes it back this far
+  env.done();
+})
+</code></pre>
+
+h2. onFinish
+
+These callbacks run when the response has response.finish() called on it.  These callbacks are always run when response.finish is called and may be useful for logging / auditing / cleanup tasks.
+
+Note, by the time this callback is executed, the repsonse has already gone to the client.
+
+<pre><code>// deletes a temp file
+env.onFinish(function(){
+  // delete some temp file
+});
+</code></pre>
+
+h1. Making a Link
+
+There are a number of ways to make a link.  At it's heart, a link is simply an object that listens to itself for a "request" event.  The event provides a single argument, the Chain Environment object.
+
+h2. From a function
+
+Chains builder can handle functions and will turn them into links for you.
+
+<pre><code>// Link from a function using an explicit make
+  chain.Builder.make([ function(env){ /* do stuff */ }]);
+
+  // creating a link from a function as part of a builder stack
+  var builder = new chain.Builder();
+  builder.use(function(env){ /* do stuff */} );
+</code></pre>
+
+h2. From an object
+
+When you make a link from an object, you should have an onRequest method that receives a single env argument.
+
+<pre><code>// Make a link from an object using chain.Link
+var myLink = new chain.Link("My Links Name", myObj);
+
+// Make a new link using a builder stack
+var builder = new chain.Builder();
+builder
+  .use(new chain.Link(myObj))
+</code></pre>
+
+
+h2. Manually
+
+Setup your object to add a listener to itself for the "request" event.
+
+<pre><code>// a manual Link
+function someLink(){
+  process.mixin(this, process.EventEmitter);
+  var self = this;
+  self.addListener("request", function(env){
+    self.handlerFunction.call(self, env);
+  });
+}
+</code></pre>
+
+h1. Constructing a Chain
+
+When you construct a chain, you're basically getting the builder to add a nextApp attribute to each chain that provides a default next link.  The link itself can choose to either use that link as the next place, choose another place to send the request, or simply respond to the client and finish the request.
+
+h2. Using an array
+<pre><code>// Making a chain from an array of functions / links
+var app = chain.Builder.make(arrayOfFunctionsOrLinks);
+</code></pre>
+
+h2. Using a configurable Builder instance
+
+<pre><code>// Create a builder object that you can configure
+var builder = new chain.Builder();
+builder
+  .use(function(env){ /* wrapped in an object.  this.nextApp available */})
+  .use(new chain.Link("My Link", someObj)
+  .useConstructor(myConstructor, optionsObject);
+
+var app = builder.build();
+</code></pre>
+
