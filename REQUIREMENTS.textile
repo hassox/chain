@@ -10,10 +10,25 @@ h2. Moving Around the Chain
 Moving around the chain of links is
 
 * Provide a default path through the chain
+** When using a link, it needs a mechanism to join the links together in a default way such that each link can find the next "default" link in the chain.
+** The construction of a path through the chain should not be rigidly envorced.  That is, each link should be able to decide what the next link is if any
 * Pass a request forward to the next link in the default chain
+** Passing a request forward in the chain should be flexible and simple.  An example in chain <pre><code>
+env.send(nextApp);</code></pre>
 * Pass a request forward to an arbitrary link
+** Same as above.  Substitute nextApp for any link that is next in the chain
 * Pass a request back one step (Note, it should only ever go one step back)
+** A link should be able to register a function it wants to execute if the request comes back through it, and has not yet been completed.  This is the default way chains should work.
+** An example of this being useful is if the body of a response is a file and it should be chunked.  There are many other examples of useful "middleware" in rack including ETAG, Caching, authentication etc.
+** Not all links want or need to modify the request on the way out.  These links should not see the request on the way out then.
+** A callback stack should be maintained such that when a link recieves a request it can add a function to execute if the request comes back.
+** An example of declaring such a callback in Chain <pre><code>
+env.send(nextApp, functon(){ /* do stuff */ });</code></pre>
+** A Link example of passing control of the request back to the last defined callback. <pre><code>
+env.done()
 * Stop a request without passing it back (complete / websocket / long connection etc)
+** Any link should be able to finish a response at any time.  If a link knows what needs to be done, then it should be able to respond and finish the response without passing back to links that are expecting to be able to modify the response before it goes to the client.
+** To call the next function on the stack use env.done() in chain
 
 h2. Callbacks
 
@@ -21,15 +36,33 @@ In callstack based setups, each component sees the request on the way in, and on
 
 * Add callbacks so this link sees the env on the backwards traversal.
 ** Can either act to send it to the client, or modify the response.
-** These callbacks may not actually run if something downstream finishes the response.
+** These callbacks may not actually run if something downstream finishes the response and does not continue the callback stack.
+** EXAMPLE: env.send(nextApp, function(){ /* stuff */ });
+** EXAMPLE: env.onDone(function(){ /* stuff */ });
 * Add callbacks to modify the headers prior to them being sent
 ** Need to be able to modify the headers hash.  Links may want to set content-length content-type or other header values
+** EXAMPLE: env.beforeHeaders(function(status, headers){ /* stuff */ });
+** Return an array of arguments for sendHeaders
 * Add callbacks to modify body chunks prior to them being sent
 ** Individual chunks should be accessible.  eg. gzipping each chunk
+** EXAMPLE: env.beforeSendbody(function(chunk, encoding){ /* stuff */ })
+** Return an array of arguments for response.sendBody
 * Add callbacks to perform actions after a response is finished
 ** Need to run after the response is finished.  This way the client gets the response asap, and anything later can be run after the response is finished.
 ** Mail, Logging, Auditing, DB Connection Cleanup etc.
+** EXAMPLE: env.onFinish(function(){ /* stuff */ });
 
 h2. Building A Chain
 
-* Join links together to provide a default path
+* Join links together to provide a default path through the application
+** These may not be used by the links but by giving a default path through the chain, you're setting up the application as you expect it to run in default cases.
+** EXAMPLE: Chain.Builder.make([ function(env){ env.send(nextApp) }, anObjectThatHasARequestListenerOnItself])
+** EXAMPLE: <pre><code>
+var builder = new Chain.Builder();
+builder
+  .use(function(env){env.done()})
+  .use(myInstanceLink)
+  .useConstructor(myContstructor, { an : "opts", hash : "to use" })
+
+chain.run(builder.build());
+</code></pre>
