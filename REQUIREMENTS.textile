@@ -102,7 +102,7 @@ function htmlHeader(env){
 }
 
 function endPoint(env){
-  env.body = "<div>Hi!</div>";
+  env.body = "&lt;div&gt;Hi!&lt;/div&gt;";
   env.done();
 }
 
