@@ -4,6 +4,15 @@ This is a scratch pad for the requirements (bahaviors) of Chain.  What it should
 
 A "Link" is a piece of the application that can be developed in a focused, reasonably isolated way.
 
+Chaining has proven it's worth in many systems and allows decoupled components to work together through a minimal interface.
+
+By using an event to push the request forward through the chain, callstacks are minimised, and are eliminated between components.  This is important to allow many requests to get a slice of the processor.  Considering that the event loop has no threads, any one request that holds the attention of the event loop for it's entire request means that no other request, or out of request process can use the processor till it's finished.  By forcing components to use events to pass the reqest around it gives up control of the event loop so that many things may be processed in a much more timely manner.  Imagine iterating through a huge array inside a browser.  Although there's no IO wait occuring and CPU utilisation is maximised.  The event loop is also stalled waiting for the calcs to finish.  By spliting things into smaller chunks, we can be more responsive on the server.
+
+
+Ryah: "With no concurrency, comes great concurrency"
+
+Although the document below describes the things that should be considered when building a chaining approach.  The end result should be very simple for the basic case, and allow the complex.  Examples of how Chain achives this will be given at the end:
+
 
 h2. Moving Around the Chain
 
@@ -66,3 +75,59 @@ builder
 
 chain.run(builder.build());
 </code></pre>
+
+
+h1. Some examples of chain applications:
+
+EXAMPLE: Simple chain app
+<pre><code>
+var chain = require('chain');
+
+var app = chain.Builder.make([function(env){
+  env.body = "Hello World!";
+  env.done();
+}])
+
+chain.run(app);
+</code></pre>
+
+You can see that most of this is setting up the chain.  Here's an example of multiple components in a chain.
+
+EXAMPLE: 2 Link chain app
+<pre><code>
+var chain = require('chain');
+function htmlHeader(env){
+  env.headers["Content-Type"] = "text/html";
+  env.send(nextApp);
+}
+
+function endPoint(env){
+  env.body = "<div>Hi!</div>";
+  env.done();
+}
+
+var app = chain.Builder.make([htmlHeader, endPoint]);
+
+chain.run(app);
+</pre></code>
+
+EXAMPLE: 3 link chain app with callback
+<pre><code>
+function authorize(env){
+  env.send(nextApp, function(){
+    if(env.status == 401){
+      env.send(failureApp);
+    } else {
+      env.done();
+    }
+  }
+}
+
+var app = chain.Builder.make([htmlHeader, authorize, endPoint]);
+
+chain.run(app);
+</code></pre>
+
+You can see here that it's easy with chain to either pass it back or take some other action.
+
+The simple cases should be simple!
