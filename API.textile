@@ -12,6 +12,7 @@ A link is an object that has an onRequest function.
     env.next();
   }
 }
+</code></pre>
 
 h1. Moving around the Chain
 
