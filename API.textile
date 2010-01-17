@@ -2,6 +2,17 @@ h1. Demonstrates the API for Chain
 
 For the purposes of this document, the "chain" variable is the imported Chain object.  The "env" object is the chain request environment object
 
+h1. A Basic Link
+
+A link is an object that has an onRequest function.
+
+<pre><code>var myLink = {
+  onRequest : function(env){
+    env.body = "In myLink";
+    env.next();
+  }
+}
+
 h1. Moving around the Chain
 
 Moving from one link to another must not block.  Chain takes care of this for you by calling the next Link for you and ensuring that it's not blocking.
