@@ -3,19 +3,19 @@
 process.mixin(require("sys"));
 var Chain = require('../lib/chain');
 
-app = Chain.Builder.make(function(env) {
-  env.formData(function() {
-    /* returns
-    {
-      "test": "test"
-    }
-    */
-    env.body = inspect(env.parts);
-    env.done();
+var builder = new Chain.Builder();
+builder
+  .use(function(env) {
+    env.formData(function() {
+      /* returns
+      {
+        "test": "test"
+      }
+      */
+      env.body = inspect(env.parts);
+      env.done();
+    })
   })
 
-
-})
-
-Chain.run(app);
+Chain.run(builder.build());
 

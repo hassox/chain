@@ -1,8 +1,9 @@
 var sys = require('sys');
 var chain = require('../lib/chain');
 
-var app = chain.Builder.make([
-  function(env){
+var builder = new chain.Builder();
+builder
+  .use(function(env){
     env.beforeHeaders(function(status, headers){
       sys.puts("In First :");
       sys.puts("STATUS:   " + status);
@@ -10,25 +11,24 @@ var app = chain.Builder.make([
       headers["X-MyHeader"] = "Some Header"
       return [500, headers]; // change the status code
     })
+    env.next();
+  })
 
-    env.send(this.nextApp);
-  },
-
-  function(env){
+  .use(function(env){
     env.beforeHeaders(function(status, headers){
       sys.puts("In Second : ");
       sys.puts("STATUS    : " + status);
       sys.puts("HEADERS   : " + sys.inspect(headers));
       headers["X-MySecondHeader"] = "Another Header";
     })
-    env.send(this.nextApp);
-  },
+    env.next();
+  })
 
-  function(env){
+  .use(function(env){
     env.body += "In the end";
     env.done();
-  }
-])
+  })
 
-chain.run(app);
+
+chain.run(builder.build());
 

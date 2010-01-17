@@ -11,19 +11,15 @@ will return
 <h1>Hello jello world</h1>
 */
 
-var count = 0;
+builder = new Chain.Builder()
 
-try{
-  app = Chain.Builder.make(
-    function(env) {
-      env.headers['content-type'] = 'text/html';
-      env.body = "<h1>Hello jello world</h1>";
-      env.done();
-    }
-  );
-} catch(e) {
-  sys.puts(e.stack)
-}
+builder
+  .use(function(env) {
+        env.headers['content-type'] = 'text/html';
+        env.body = "<h1>Hello jello world</h1>";
+        env.done();
+      }
+    );
 
-Chain.run(app);
+Chain.run(builder.build());
 
