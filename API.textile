@@ -110,13 +110,6 @@ h1. Constructing a Chain
 
 When you construct a chain, you're basically getting the builder to add a nextApp attribute to each link that provides a default nextLink.  The link itself can choose to either let the env use that link as the next link in the chain, choose another link to send the request to, or simply respond to the client and finish the request.
 
-h2. Using an array
-<pre><code>// Making a chain from an array of functions / links
-var app = chain.Builder.make(arrayOfFunctionsOrLinks);
-</code></pre>
-
-h2. Using a configurable Builder instance
-
 <pre><code>// Create a builder object that you can configure
 var builder = new chain.Builder();
 builder
