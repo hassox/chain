@@ -6,11 +6,7 @@ A "Link" is a piece of the application that can be developed in a focused, reaso
 
 Chaining has proven it's worth in many systems and allows decoupled components to work together through a minimal interface.
 
-By using an event to push the request forward through the chain, callstacks are minimised, and are eliminated between components.  This is important to allow many requests to get a slice of the processor.  Considering that the event loop has no threads, any one request that holds the attention of the event loop for it's entire request means that no other request, or out of request process can use the processor till it's finished.  By forcing components to use events to pass the reqest around it gives up control of the event loop so that many things may be processed in a much more timely manner.  Imagine iterating through a huge array inside a browser.  Although there's no IO wait occuring and CPU utilisation is maximised.  The event loop is also stalled waiting for the calcs to finish.  By spliting things into smaller chunks, we can be more responsive on the server.
-
-Although chain uses an event to push the request forward, it does so by having each link setup a "request" event listener on itself.  Setting up static listeners on objects to "listen" for a request object on something upstream means that the path through the application becomes static.  A router, or other piece of kit cannt determine where to send the request next.  It also becomes possible that there will be multiple listeners on a link meaning that there is potential for conflict.  By having a link listen to itself for the request object, there is no potential for conflict, and each link may contain the logic required to pass the request onto the next stage.
-
-Likewise there are no event listeners setup for the request coming back through the chain.  This is for similar reasons, but also, so that each link can register it's interest only if required.
+By using a non blocking transition to push the request forward through the chain, callstacks are minimised, and are eliminated between components.  This is important to allow many requests to get a slice of the processor.  Considering that the event loop has no threads, any one request that holds the attention of the event loop for it's entire request means that no other request, or out of request process can use the processor till it's finished.  By forcing components to use async transitions to pass the reqest around it gives up control of the event loop so that many things may be processed in a much more timely manner.  It's easier to rely on links being async if they're all async.  Imagine iterating through a huge array inside a browser.  Although there's no IO wait occuring and CPU utilisation is maximised.  The event loop is also stalled waiting for the calcs to finish.  By spliting things into smaller chunks, we can be more responsive on the server.
 
 Ryah: "With no concurrency, comes great concurrency"
 
@@ -60,7 +56,7 @@ h2. Building A Chain
 
 * Join links together to provide a default path through the application
 ** These may not be used by the links but by giving a default path through the chain, you're setting up the application as you expect it to run in default cases.
-
+* Only Links can be added to a Link.  Chains are constructed one link at a time.
 h1. Streaming
 
 It's easy to stream in Chain.  Then environment gives you access to the raw response object.  You can stream by using the raw response object, and if you finsih the response with response.finish(), you can.

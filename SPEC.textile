@@ -1,16 +1,17 @@
 h1. Chain Spec
 
-Chain is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Chain links multiple application components, hereafter referred to as "links" together by giving a standard way to pass requests.
+Chain is a simple specification and framework for building web applications in the node.js engine.  node.js is deliberately simple and does not attempt to over specify how an application must function logically other than the mechanism it should use.  Chain links multiple application components, hereafter referred to as "links" together by giving a standard way to pass requests between each other.
 
-Chain specifies a default chain structure for links, based purely on events to move from one link to another.  This has the benefit of minimising call-stack dependent applications, and allowing a consistent way to call links from other applications and links, thereby maximising re-usability.
+Chain specifies a default chain structure for links, based on each link containing a reference to the next link, 'nextLink', so that the environment knows where to go next if required.  A link in a chain is a single instance of an object or object type.
 
 h2. Applications
 
 A Chain compatible application has the following characteristics
 
-* Each link MUST listen to itself for a "request" event.  The first, and only, argument of which must be THE Chain.Environment instance for the request.
-* The Chain.Environment instance MUST be passed on.  An application may not receive one instance of the Chain.Environment and pass a different instance to the next application
-* If an application is finished but does not respond to the client directly, it should call the _done_ method on the environment instance before finsihing the method.
+* Each link MUST provide an onRequest method that recieves one argument, the chain environment.
+* The Chain.Environment instance MUST be passed on.  An link may not receive one instance of the Chain.Environment and pass a different instance to the next link
+* Transitions between links must not block.  The env.next() method must be non-blocking
+* If an application is finished but does not respond to the client directly, it should call the done() method on the environment instance before finsihing the method.
 
 h2. Chain.Environment
 
@@ -23,21 +24,10 @@ The Chain.Environment instance is the common thread throughout the request.  The
 * env.beforeHeaders     - Add a callback to run just before the headers are sent to the client.  This can be used to encode the session into the cookie and other such functionality.  Optionally return an array with the arguments for response.sendHeader
 * env.beforeSendBody    - Add a filter to the send body method.  By supplying a function that accepts the same arguments as response.sendBody you can modify the chunck prior to it being sent to the client.  These can be queued for multi stage filtering.  To change the arguments, return an array of the arguments to pass to sendBody
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
+* env.next - This function must move to the next link in the chain, or the specified link if one is given.  It must be non-blocking
 * env.headers
 * env.status
 * env.body
-
-h2. Global Links
-
-Chain may store global level links.  These are made available so that all applications may access them.  You may add an application to the collection if it is to act in a global capacity.  These are available at
-
-Chain.Links
-
-Examples may be (these may not be implemented)
-Chain.Links.Errors
-Chain.Links.Layouts
-Chain.Links.Auditing
-Chain.Links.Logging
 
 h2. Chain Events
 

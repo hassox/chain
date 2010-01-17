@@ -4,32 +4,33 @@ For the purposes of this document, the "chain" variable is the imported Chain ob
 
 h1. Moving around the Chain
 
+Moving from one link to another must not block.  Chain takes care of this for you by calling the next Link for you and ensuring that it's not blocking.
+
 h2. Sending the request forward
 
 To send the request from one link to another:
 
 <pre><code>// Simple pass it forward:
-env.send(nextApp);
+env.next();
 
 // Pass it forward with a callback:
-env.send(nextApp, function(){
+env.next(function(){
   /* do stuff here */
 })
 
-// Manually pass it forward to another Link:
-otherLink.emit("request", env);
+// pass it forward to a known link:
+env.next(someLink);
+
+// pass it forward to a known link with a callback:
+env.next(someLink, function(){ /* stuff */ }
 </code></pre>
 
 h2. Sending the request back through the chain
 
 When you recieve a request you can add a function to be called "on the way out" so that you can modify / affect the response after the endpoint has done it's thing.
 
-<pre><code>//First register a callback
-env.send(nextApp, function(){
-  // do stuff
-  env.done();
-});
-
+<pre><code>
+//First register a callback as above
 // Send the request back one link:
 env.done();
 </code></pre>
@@ -83,7 +84,7 @@ env.onDone(function(){
 })
 
 // Implicitly adding to the onDone stack when sending the request forward
-env.send(nextApp, function(){
+env.next(function(){
   // an onDone callback.  Will be called if the request makes it back this far
   env.done();
 })
@@ -103,51 +104,11 @@ env.onFinish(function(){
 
 h1. Making a Link
 
-There are a number of ways to make a link.  At it's heart, a link is simply an object that listens to itself for a "request" event.  The event provides a single argument, the Chain Environment object.
-
-h2. From a function
-
-Chains builder can handle functions and will turn them into links for you.
-
-<pre><code>// Link from a function using an explicit make
-  chain.Builder.make([ function(env){ /* do stuff */ }]);
-
-  // creating a link from a function as part of a builder stack
-  var builder = new chain.Builder();
-  builder.use(function(env){ /* do stuff */} );
-</code></pre>
-
-h2. From an object
-
-When you make a link from an object, you should have an onRequest method that receives a single env argument.
-
-<pre><code>// Make a link from an object using chain.Link
-var myLink = new chain.Link("My Links Name", myObj);
-
-// Make a new link using a builder stack
-var builder = new chain.Builder();
-builder
-  .use(new chain.Link(myObj))
-</code></pre>
-
-
-h2. Manually
-
-Setup your object to add a listener to itself for the "request" event.
-
-<pre><code>// a manual Link
-function someLink(){
-  process.mixin(this, process.EventEmitter);
-  var self = this;
-  self.addListener("request", function(env){
-    self.handlerFunction.call(self, env);
-  });
-}
-</code></pre>
+There are any number of ways to make a link.  At it's heart a link is an object that implements an onRequest(env) method.  If there is a downstream link, it should attach that to the 'nextLink' attribute.
 
 h1. Constructing a Chain
 
-When you construct a chain, you're basically getting the builder to add a nextApp attribute to each chain that provides a default next link.  The link itself can choose to either use that link as the next place, choose another place to send the request, or simply respond to the client and finish the request.
+When you construct a chain, you're basically getting the builder to add a nextApp attribute to each link that provides a default nextLink.  The link itself can choose to either let the env use that link as the next link in the chain, choose another link to send the request to, or simply respond to the client and finish the request.
 
 h2. Using an array
 <pre><code>// Making a chain from an array of functions / links
@@ -160,8 +121,8 @@ h2. Using a configurable Builder instance
 var builder = new chain.Builder();
 builder
   .use(function(env){ /* wrapped in an object.  this.nextApp available */})
-  .use(new chain.Link("My Link", someObj)
-  .useConstructor(myConstructor, optionsObject);
+  .use(someObj)
+  .use(myConstructor, any, argument, list); // calls   Object.create.apply(Object, argumentsFromUse)
 
 var app = builder.build();
 </code></pre>
