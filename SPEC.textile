@@ -4,7 +4,7 @@ Chain is a simple specification and framework for building web applications in t
 
 Chain specifies a default chain structure for links, based on each link containing a reference to the next link, 'nextLink', so that the environment knows where to go next if required.  A link in a chain is a single instance of an object or object type.
 
-h2. Applications
+h2. Links
 
 A Chain compatible application has the following characteristics
 
@@ -12,6 +12,7 @@ A Chain compatible application has the following characteristics
 * The Chain.Environment instance MUST be passed on.  An link may not receive one instance of the Chain.Environment and pass a different instance to the next link
 * Transitions between links must not block.  The env.next() method must be non-blocking
 * If an application is finished but does not respond to the client directly, it should call the done() method on the environment instance before finsihing the method.
+* The context of the onRequest method is the link on which it is called.
 
 h2. Chain.Environment
 
@@ -25,9 +26,9 @@ The Chain.Environment instance is the common thread throughout the request.  The
 * env.beforeSendBody    - Add a filter to the send body method.  By supplying a function that accepts the same arguments as response.sendBody you can modify the chunck prior to it being sent to the client.  These can be queued for multi stage filtering.  To change the arguments, return an array of the arguments to pass to sendBody
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
 * env.next - This function must move to the next link in the chain, or the specified link if one is given.  It must be non-blocking
-* env.headers
-* env.status
-* env.body
+* env.headers - A buffer for response headers
+* env.status  - A buffer for the response status
+* env.body    - A buffer for the response body
 
 h2. Chain Events
 
