@@ -26,8 +26,8 @@ builder
 
       env.request.addListener("complete", function(){
        // sys.puts("Complete: " + requestNumber);
-        env.headers['content-type'] = 'text/html';
-        env.body = "<h1>Hello jello world</h1>" + buffer.join("");
+        env.response.headers['content-type'] = 'text/html';
+        env.response.body = "<h1>Hello jello world</h1>" + buffer.join("");
         env.done();
       })
 

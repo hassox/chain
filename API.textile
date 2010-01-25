@@ -8,7 +8,7 @@ A link is an object that has an onRequest function.
 
 <pre><code>var myLink = {
   onRequest : function(env){
-    env.body = "In myLink";
+    env.response.body = "In myLink";
     env.next();
   }
 }
@@ -59,13 +59,13 @@ h2. beforeHeaders
 These callbacks run prior to response.sendHeader.  By returning an array with the arguments for response.sendHeader you can intercept and modify the headers before they're sent to the client.
 
 <pre><code>// A callback that modifies the headers
-env.beforeHeaders(function(status, headers){
+env.response.beforeHeaders(function(status, headers){
   // do stuff to the headers and or status
   return [status, headers];
 });
 
 // A callback that does not modify the headers
-env.beforeHeaders(function(status, headers){
+env.response.beforeHeaders(function(status, headers){
   // do stuff
   // no return
 });
@@ -78,7 +78,7 @@ Run before each chunk is sent for response.sendBody.  To alter the response chun
 The initial reason for this is to enable per-chunk gzipping enabled by an upstream link.
 
 <pre><code>// A simple gzipper
-env.beforeSendBody(function(chunk, encoding){
+env.response.beforeSendBody(function(chunk, encoding){
   // do stuff to the chunk
   // maybe audit / log stuff
   return [modifiedChunk, encoding]
@@ -100,18 +100,6 @@ env.next(function(){
   // an onDone callback.  Will be called if the request makes it back this far
   env.done();
 })
-</code></pre>
-
-h2. onFinish
-
-These callbacks run when the response has response.finish() called on it.  These callbacks are always run when response.finish is called and may be useful for logging / auditing / cleanup tasks.
-
-Note, by the time this callback is executed, the repsonse has already gone to the client.
-
-<pre><code>// deletes a temp file
-env.onFinish(function(){
-  // delete some temp file
-});
 </code></pre>
 
 h1. Making a Link

@@ -26,7 +26,7 @@ function firstOne(env){
 
 function lastOne(env){
   sys.puts("In the last one dude");
-  env.body += "In the last one dude";
+  env.response.body += "In the last one dude";
   env.done();
 }
 

@@ -23,7 +23,7 @@ var SimpleRouter = {
   onRequest : function(env){
     var self = this;
 
-    if (env.request.uri == "/test"){
+    if (env.request.url == "/test"){
       env.next();
     } else {
       env.next(SomeEndPoint);
@@ -35,7 +35,7 @@ var SimpleRouter = {
 var SomeEndPoint = {
   name      : 'SomeEndPoint',
   onRequest : function(env){
-    env.body += "I'm In " + this.name;
+    env.response.body += "I'm In " + this.name;
     env.done();
     env.audit("Hi, I'm in Some Endpoint and I've got something to say", "And I've got somethign else to say too");
   }
@@ -43,8 +43,8 @@ var SomeEndPoint = {
 
 var EndPoint = {
   onRequest : function(env){
-    env.body += "<br/>I'm in the endpoint now!";
-    env.headers["Content-Type"] = "text/plain";
+    env.response.body += "<br/>I'm in the endpoint now!";
+    env.response.headers["Content-Type"] = "text/plain";
     env.done();
     env.audit("I'm in the Endpoint.  I'm done " )
   }

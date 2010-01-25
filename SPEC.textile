@@ -21,20 +21,17 @@ The Chain.Environment instance is the common thread throughout the request.  The
 * env.request           - The raw server request object from node.js
 * env.response          - The raw server response object from node.js
 * env.onDone            - Add a callback to run after the request is considered "done" by an application.  These callbacks _may_ run.  See further for more information
-* env.onFinish          - Queues a callback will run after the response.finish() method is called.  This callback will run once that method is called.
-* env.beforeHeaders     - Add a callback to run just before the headers are sent to the client.  This can be used to encode the session into the cookie and other such functionality.  Optionally return an array with the arguments for response.sendHeader
-* env.beforeSendBody    - Add a filter to the send body method.  By supplying a function that accepts the same arguments as response.sendBody you can modify the chunck prior to it being sent to the client.  These can be queued for multi stage filtering.  To change the arguments, return an array of the arguments to pass to sendBody
+* env.response.beforeHeaders     - Add a callback to run just before the headers are sent to the client.  This can be used to encode the session into the cookie and other such functionality.  Optionally return an array with the arguments for response.sendHeader
+* env.response.beforeSendBody    - Add a filter to the send body method.  By supplying a function that accepts the same arguments as response.sendBody you can modify the chunck prior to it being sent to the client.  These can be queued for multi stage filtering.  To change the arguments, return an array of the arguments to pass to sendBody
 * env.done      - The trigger to fire the next onDone callback.  Each callback, if it has not completed the request, should call env.done() to run the next onDone callback in the queue.
 * env.next - This function must move to the next link in the chain, or the specified link if one is given.  It must be non-blocking
-* env.headers - A buffer for response headers
-* env.status  - A buffer for the response status
-* env.body    - A buffer for the response body
+* env.response.headers - A buffer for response headers
+* env.response.status  - A buffer for the response status
+* env.response.body    - A buffer for the response body
 
 h2. Chain Events
 
 Chain is an event emitter and will emit events as a central message dispatch.  Chain will emit events on various stages of the build.  The event should be a generic event type followed by a specified type.  Any link can also have Chain broadcast events
-
-Chain.broadcast("major_event_type", "specific_event", [any, other, args])
 
 Chain emits the following Events.
 

@@ -13,14 +13,14 @@ builder
   .use(Chain.Links.Logger)
   .use(function(env) {
     env.next(function() {
-      env.body += '<h2>and two bits!</h2>';
+      env.response.body += '<h2>and two bits!</h2>';
       env.done();
     })
   })
 
   .use(function(env) {
-    env.headers['content-type'] = 'text/html';
-    env.body = "<h1>Hello jello world</h1>";
+    env.response.headers['content-type'] = 'text/html';
+    env.response.body = "<h1>Hello jello world</h1>";
     env.done();
   })
 

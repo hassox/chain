@@ -4,7 +4,7 @@ var chain = require('../lib/chain');
 var builder = new chain.Builder();
 builder
   .use(function(env){
-    env.beforeHeaders(function(status, headers){
+    env.response.beforeHeaders(function(status, headers){
       sys.puts("In First :");
       sys.puts("STATUS:   " + status);
       sys.puts("HEADERS:  " + sys.inspect(headers));
@@ -15,7 +15,7 @@ builder
   })
 
   .use(function(env){
-    env.beforeHeaders(function(status, headers){
+    env.response.beforeHeaders(function(status, headers){
       sys.puts("In Second : ");
       sys.puts("STATUS    : " + status);
       sys.puts("HEADERS   : " + sys.inspect(headers));
@@ -25,7 +25,7 @@ builder
   })
 
   .use(function(env){
-    env.body += "In the end";
+    env.response.body += "In the end";
     env.done();
   })
 

@@ -10,13 +10,13 @@ will return
 var builder = new Chain.Builder();
 builder
   .use(function(env) {
-    env.onFinish(function() {
+    env.response.addListener("finish", function() {
       puts('this is after the request');        // this will be printed out
-      env.body += 'you will never ever see me'; // this line has no effect.
+      env.response.body += 'you will never ever see me'; // this line has no effect.
     })
 
-    env.headers['content-type'] = 'text/html';
-    env.body = "<h1>Hello jello world</h1>";
+    env.response.headers['content-type'] = 'text/html';
+    env.response.body = "<h1>Hello jello world</h1>";
     env.done();
   })
 
