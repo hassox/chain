@@ -1,0 +1,51 @@
+{
+  name : "chain",
+  description : "Simple, Lightweight Async Foundation for Web Apps",
+  maintainers : [
+    {
+      name  : "Daniel Neighman",
+      email : "has.sox@gmail.com",
+      web   : "http://github.com/hassox"
+    },
+    {
+      name  : "Joshua Hull",
+      email : "joshbuddy@gmail.com",
+      web   : "http://github.com/joshbuddy"
+    }
+  ],
+  contributors : [
+    {
+      name  : "Daniel Neighman",
+      email : "has.sox@gmail.com",
+      web   : "http://github.com/hassox"
+    },
+    {
+      name  : "Joshua Hull",
+      email : "joshbuddy@gmail.com",
+      web   : "http://github.com/joshbuddy"
+    }
+  ],
+  bugs : {
+    web : "http://github.com/hassox/chain/issues"
+  },
+  licences : [
+    {
+      type  : "MIT",
+      url   : "http://github.com/hassox/chain/blob/master/LICENSE"
+    }
+  ],
+  repositories : [
+    {
+      type  : "git",
+      url   : "http://github.com/hassox/chain"
+    }
+  ],
+  engine  : "node",
+  builtin : false,
+  directories : ["lib", "examples"]
+  version : "0.0.1",
+  keywords: ["web", "http", "node", "middleware"]
+  main : "chain"
+}
+
+
