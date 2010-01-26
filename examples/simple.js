@@ -20,11 +20,11 @@ builder
 
       //sys.puts("Request: " + requestNumber);
 
-      env.request.addListener("body", function(data){
+      env.request.body.addListener("data", function(data){
         buffer.push(data);
       })
 
-      env.request.addListener("complete", function(){
+      env.request.body.addListener("finish", function(){
        // sys.puts("Complete: " + requestNumber);
         env.response.headers['content-type'] = 'text/html';
         env.response.body = "<h1>Hello jello world</h1>" + buffer.join("");
