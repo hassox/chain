@@ -1,41 +1,5 @@
-h1. Chain
+h1. Depricated in favour of ejsgi
 
-Chain is a convention for building web applications.  Why Another One?  Asyncronous Processing.
+"http://github.com/isaacs/ejsgi":http://github.com/isaacs/ejsgi
 
-The conventions to date for making web applications are callstack based.
-
-<pre>
-// Conventional Callstack Based Systems
-
-function
-  -> function
-    -> function
-      ->  function
-        <- return
-      <- return
-    <- return
-  <- return
-</pre>
-
-For any rubyists this is great, it's how rack works.  Call a method and return a value.  Easy.  This is a callstack structure.  Any exception raised or thrown in downstream methods can be caught and dealt with.  You know what you're getting, and the request is assured to pass through so you can modify it when it comes back up the stack.  I've written a lot of Rack middleware and think it's great in Ruby.
-
-Node and JavaScript provide a rich asyncronous based structure for building applications.  Node is an event loop.  It's built for events and async programming.  Node will take a request from the event queue, and process it for as long as it holds the callstack which is until the function finishes.
-
-A callstack based approach is therefore flawed inside Node.js.  Inside an event loop we should be doing small pieces of work and then putting the next piece on the queue.  In this way, we get concurrency.  Whilst you may not be interested in concurrency for multiple requests, you can perform many different tasks by splitting the request into pieces for the event loop.  This type of concurrency is very valuable.
-
-Chain, then, is a convention for designing applications for the web inside node.js.  There's some code thrown in to help do this.  Chain requires the use of events between links (middleware) but doesn't need the developer to think too much about it.  The chain environment knows how to call links asyncronously and will let you construct your application and hapily go where you tell it to. It keeps things efficient by only providing the response to links that register callbacks.
-
-Very simply:
-
-Each link should supply an 'onRequest' function.  This receives exactly 1 argument.  The chain environment.
-
-* To pass the request forward use environment.next();
-* To finish and pass back up the stack use environment.done()
-* To finish the request just respond to the client directly (use sparingly)
-
-See the spec document for more detailed information.
-
-See the examples for more information.
-
-This project is brought to you as a joint work by Joshua Hull & Daniel Neighman
 
