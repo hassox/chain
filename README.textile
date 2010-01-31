@@ -1,4 +1,4 @@
-h1. Depricated in favour of ejsgi
+h1. Deprecated in favour of ejsgi
 
 "http://github.com/isaacs/ejsgi":http://github.com/isaacs/ejsgi
 
